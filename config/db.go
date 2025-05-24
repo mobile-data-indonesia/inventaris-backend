@@ -15,7 +15,7 @@ var (
 	once sync.Once
 )
 
-func ConnectDB() *gorm.DB {
+func ConnectDB() {
 	once.Do(func() {
 		dsn := os.Getenv("DB_CONFIG")
 		var err error
@@ -25,11 +25,8 @@ func ConnectDB() *gorm.DB {
 		}
 		fmt.Println("Berhasil koneksi ke database")
 
-		//migration put here
 		DB.AutoMigrate(&models.User{})
-		
+		DB.AutoMigrate(&models.Item{})
 		fmt.Println("Database Migrated")
 	})
-
-	return DB
 }
