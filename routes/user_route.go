@@ -18,9 +18,9 @@ func (r *UserRoutes) RegisterRoutes(router *gin.Engine) {
 	{
 		user.POST("/register", r.UserController.Register)
 		user.POST("/login", r.UserController.Login)
+		user.POST("/refresh-token", r.UserController.RefreshToken)
 		user.PUT("/:id", r.UserController.UpdateUser)
 		user.GET("/:id", r.UserController.GetUserByID)
 		user.GET("/", r.UserController.GetAllUsers)
-		user.POST("/refresh-token", r.UserController.RefreshToken)
 	}
 }

@@ -1,13 +1,17 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/google/uuid"
 	"github.com/mobile-data-indonesia/inventaris-backend/services"
 	"github.com/mobile-data-indonesia/inventaris-backend/validators"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type UserHandler struct {
@@ -53,6 +57,24 @@ func (ctrl *UserHandler) Login(c *gin.Context) {
 }
 
 func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
+	log.Println("UpdateUser called")
+
+	// Print form-data fields untuk debug
+	if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse multipart form"})
+		return
+	}
+	for key, values := range c.Request.MultipartForm.Value {
+		for _, v := range values {
+			log.Printf("Form field: %s, Value: %s\n", key, v)
+		}
+	}
+	for key, files := range c.Request.MultipartForm.File {
+		for _, f := range files {
+			log.Printf("File field: %s, Filename: %s\n", key, f.Filename)
+		}
+	}
+
 	userIDStr := c.Param("id")
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
@@ -61,7 +83,8 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	var input validators.UpdateUserRequest
-	if err := c.ShouldBind(&input); err != nil {
+	if err := c.ShouldBindWith(&input, binding.FormMultipart); err != nil {
+		log.Println("Form bind error:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -69,13 +92,24 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 	var profileImageUrl *string
 	file, err := c.FormFile("profile_picture")
 	if err == nil {
-		// Save file
-		dst := "uploads/" + file.Filename
+		// Buat nama file unik
+		ext := filepath.Ext(file.Filename)
+		fileName := userID.String() + ext
+		dst := filepath.Join("uploads/user", fileName)
+
+		// Pastikan folder uploads/user ada
+		if err := os.MkdirAll("uploads/user", os.ModePerm); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
+			return
+		}
+
 		if err := c.SaveUploadedFile(file, dst); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save profile picture"})
 			return
 		}
-		profileImageUrl = &dst
+
+		profileImage := "uploads/user/" + fileName
+		profileImageUrl = &profileImage
 	}
 
 	if err := ctrl.UserService.UpdateUser(userID, input, profileImageUrl); err != nil {
@@ -86,7 +120,9 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "user updated successfully"})
 }
 
+
 func (ctrl *UserHandler) GetAllUsers(c *gin.Context) {
+	// log.Println("GetAllUsers called")
 	users, err := ctrl.UserService.GetAllUsers()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
