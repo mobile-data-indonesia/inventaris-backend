@@ -58,8 +58,6 @@ func (ctrl *UserHandler) Login(c *gin.Context) {
 
 func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 	log.Println("UpdateUser called")
-
-	// Print form-data fields untuk debug
 	if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse multipart form"})
 		return
@@ -95,10 +93,9 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 		// Buat nama file unik
 		ext := filepath.Ext(file.Filename)
 		fileName := userID.String() + ext
-		dst := filepath.Join("uploads/user", fileName)
+		dst := filepath.Join("uploads/users", fileName)
 
-		// Pastikan folder uploads/user ada
-		if err := os.MkdirAll("uploads/user", os.ModePerm); err != nil {
+		if err := os.MkdirAll("uploads/users", os.ModePerm); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
 			return
 		}
@@ -108,7 +105,7 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 			return
 		}
 
-		profileImage := "uploads/user/" + fileName
+		profileImage := "uploads/users/" + fileName
 		profileImageUrl = &profileImage
 	}
 
@@ -119,7 +116,6 @@ func (ctrl *UserHandler) UpdateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "user updated successfully"})
 }
-
 
 func (ctrl *UserHandler) GetAllUsers(c *gin.Context) {
 	// log.Println("GetAllUsers called")

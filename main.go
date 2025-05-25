@@ -24,10 +24,15 @@ func main() {
 	userController := handlers.NewUserHandler(userService)
 	userRoutes := routes.NewUserRoutes(userController)
 
+	itemService := services.NewItemService(config.DB)
+	itemController := handlers.NewItemHandler(itemService)
+	itemRoutes := routes.NewItemRoutes(itemController)
+
 	router := gin.Default()
- 	
+
 	userRoutes.RegisterRoutes(router)
-	
+	itemRoutes.RegisterRoutes(router)
+
 	port := os.Getenv("PORT")
 	if err := router.Run(":" + port); err != nil {
 		log.Println("Failed to run server")

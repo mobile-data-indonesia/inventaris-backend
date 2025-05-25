@@ -1,18 +1,25 @@
 package routes
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
+	"github.com/mobile-data-indonesia/inventaris-backend/handlers"
 )
 
-func RegisterItemRoutes(r *gin.Engine) {
-	// itemService := services.NewItemService()
-	// itemHandler := handlers.NewUserHandler.NewItemHandler(itemService)
+type ItemRoutes struct {
+	ItemController *handlers.ItemHandler
+}
 
-	// itemGroup := r.Group("/items")
-	// {
-	// 	itemGroup.POST("/", itemHandler.CreateItem)
-	// }
-	log.Println("hello")
+func NewItemRoutes(ctrl *handlers.ItemHandler) *ItemRoutes {
+	return &ItemRoutes{ItemController: ctrl}
+}
+
+func (r *ItemRoutes)RegisterRoutes(router *gin.Engine) {
+	item := router.Group("/items")
+	{
+		item.POST("/", r.ItemController.CreateItem)
+	}
+
+	
+	
+	
 }

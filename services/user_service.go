@@ -30,14 +30,14 @@ func (s *UserService) RegisterUser(input validators.RegisterRequest) error {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 
 	user := models.User{
-		UserID:          uuid.New(),
-		Username:        input.Username,
-		Password:        string(hashedPassword),
-		Email:           input.Email,
-		PhoneNumber:     input.PhoneNumber,
-		Title:           input.Title,
-		Role:            input.Role,
-		Department:      input.Department,
+		UserID:      uuid.New(),
+		Username:    input.Username,
+		Password:    string(hashedPassword),
+		Email:       input.Email,
+		PhoneNumber: input.PhoneNumber,
+		Title:       input.Title,
+		Role:        input.Role,
+		Department:  input.Department,
 	}
 
 	return s.DB.Create(&user).Error
@@ -67,7 +67,7 @@ func (s *UserService) LoginUser(input validators.LoginRequest) (string, string, 
 	refreshClaims := jwt.MapClaims{
 		"username": user.Username,
 		"role":     user.Role,
-		"exp":     time.Now().Add(30 * 24 * time.Hour).Unix(), // 30 days
+		"exp":      time.Now().Add(30 * 24 * time.Hour).Unix(), // 30 days
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)

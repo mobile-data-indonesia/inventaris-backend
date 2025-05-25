@@ -11,19 +11,19 @@ type RegisterRequest struct {
 	Email       *string `json:"email" binding:"omitempty,email"`
 	PhoneNumber *string `json:"phone_number" binding:"omitempty,max=20"`
 	Role        string  `json:"role" binding:"required,oneof=staff admin"`
-	Title 		string 	`json:"title" binding:"required,oneof=advisor member"`
+	Title       string  `json:"title" binding:"required,oneof=advisor member"`
 	Department  string  `json:"department" binding:"required,oneof=it finance management"`
 }
 
 type UpdateUserRequest struct {
 	Email       string `form:"email" binding:"required,email"`
-    PhoneNumber string `form:"phone_number" binding:"required"`
-    Role        string `form:"role" binding:"required"`
-    Title       string `form:"title" binding:"required"`
-    Department  string `form:"department" binding:"required"`
+	PhoneNumber string `form:"phone_number" binding:"required"`
+	Role        string `form:"role" binding:"required"`
+	Title       string `form:"title" binding:"required"`
+	Department  string `form:"department" binding:"required"`
 }
 
 type UpdatePasswordRequest struct {
 	CurrentPassword string `json:"current_password" binding:"required"`
-	NewPassword string `json:"new_password" binding:"required,min=6,max=100"`
+	NewPassword     string `json:"new_password" binding:"required,min=6,max=100"`
 }
