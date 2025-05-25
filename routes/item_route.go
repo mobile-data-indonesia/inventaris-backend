@@ -17,6 +17,9 @@ func (r *ItemRoutes)RegisterRoutes(router *gin.Engine) {
 	item := router.Group("/items")
 	{
 		item.POST("/", r.ItemController.CreateItem)
+		item.PUT("/:id", r.ItemController.UpdateItem)
+		item.GET("/:id", r.ItemController.GetItemByID)
+		item.GET("/", r.ItemController.GetAllItems)
 	}
 
 	
