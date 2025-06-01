@@ -28,10 +28,15 @@ func main() {
 	itemController := handlers.NewItemHandler(itemService)
 	itemRoutes := routes.NewItemRoutes(itemController)
 
+	auditLogService := services.NewAuditLogService(config.DB)
+	auditLogController := handlers.NewAuditLogHandler(auditLogService)
+	auditLogRoutes := routes.NewAuditLogRoutes(auditLogController)
+
 	router := gin.Default()
 
 	userRoutes.RegisterRoutes(router)
 	itemRoutes.RegisterRoutes(router)
+	auditLogRoutes.RegisterRoutes(router)
 
 	port := os.Getenv("PORT")
 	if err := router.Run(":" + port); err != nil {

@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/mobile-data-indonesia/inventaris-backend/models"
 	"github.com/mobile-data-indonesia/inventaris-backend/validators"
@@ -16,9 +18,10 @@ func NewItemService(db *gorm.DB) *ItemService {
 }
 
 func (s *ItemService) CreateItem(req validators.CreateItemRequest, itemID uuid.UUID, imageURL string) error {
+
+
 	item := &models.Item{
 		ItemID:             itemID,
-		HolderID:           req.HolderID,
 		ItemName:           req.ItemName,
 		Vendor:             req.Vendor,
 		Category:           req.Category,
@@ -44,10 +47,19 @@ func (s *ItemService) GetItemByID(itemID uuid.UUID) (*models.Item, error) {
 	return &item, nil
 }
 
-func (s *ItemService) UpdateItem(itemID uuid.UUID, req validators.CreateItemRequest, imageURL string) error {
+func (s *ItemService) UpdateItem(itemID uuid.UUID, req validators.UpdateItemRequest, imageURL string) error {
+	var parsedHolderID *uuid.UUID
+	if req.HolderID != nil {
+		holderUUID, err := uuid.Parse(*req.HolderID)
+		if err != nil {
+			return fmt.Errorf("invalid holder_id: %w", err)
+		}
+		parsedHolderID = &holderUUID
+	}
+
 	item := &models.Item{
 		ItemID:             itemID,
-		HolderID:           req.HolderID,
+		HolderID:           parsedHolderID,
 		ItemName:           req.ItemName,
 		Vendor:             req.Vendor,
 		Category:           req.Category,

@@ -21,8 +21,4 @@ func (r *ItemRoutes)RegisterRoutes(router *gin.Engine) {
 		item.GET("/:id", r.ItemController.GetItemByID)
 		item.GET("/", r.ItemController.GetAllItems)
 	}
-
-	
-	
-	
 }

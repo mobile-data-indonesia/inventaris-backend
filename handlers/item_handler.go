@@ -111,7 +111,7 @@ func (h *ItemHandler) UpdateItem(c *gin.Context) {
 		return
 	}
 
-	var input validators.CreateItemRequest
+	var input validators.UpdateItemRequest
 	if err := c.ShouldBindWith(&input, binding.FormMultipart); err != nil {
 		log.Println("Form bind error:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -27,6 +27,8 @@ func ConnectDB() {
 
 		DB.AutoMigrate(&models.User{})
 		DB.AutoMigrate(&models.Item{})
+		DB.AutoMigrate(&models.AuditLog{})
+
 		fmt.Println("Database Migrated")
 	})
 }

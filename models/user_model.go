@@ -20,6 +20,9 @@ type User struct {
 	DeletedAt       *time.Time `gorm:"index"`
 	CreatedAt       time.Time  `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time  `gorm:"autoUpdateTime"`
+
+	AuditLogs      []AuditLog  `gorm:"foreignKey:AuditorID;references:UserID"`
+	Items          []Item  `gorm:"foreignKey:HolderID;references:UserID"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
